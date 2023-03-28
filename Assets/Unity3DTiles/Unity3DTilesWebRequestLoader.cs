@@ -234,7 +234,7 @@ namespace Unity3DTiles
                 {
                     throw new Exception("Stream is larger than can be copied into byte array");
                 }
-                if (www.isNetworkError || www.isHttpError)
+                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
                 {
                     LoadedStream = new MemoryStream(new byte[] { }, 0, 0, true, true);
                 }

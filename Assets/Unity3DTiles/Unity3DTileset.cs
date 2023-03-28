@@ -101,7 +101,7 @@ namespace Unity3DTiles
                 Root = LoadTileset(tilesetUrl, schemaTileset, null);
             }).Catch(error =>
             {
-                Debug.LogError(error.Message + "\n" + error.StackTrace);
+                Debug.LogError(error.Message + "\n" + error.StackTrace + "\n" + tilesetUrl);
             });
         }
 
@@ -144,6 +144,7 @@ namespace Unity3DTiles
                 return null;
             }
             // Add tileset version to base path
+            //据说 Perspectives : Don't need this part
             bool hasVersionQuery = new Regex(@"/[?&]v=/").IsMatch(tilesetUrl);
             if (!hasVersionQuery && !new Uri(tilesetUrl).IsFile)
             {

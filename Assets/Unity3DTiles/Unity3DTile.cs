@@ -326,9 +326,20 @@ namespace Unity3DTiles
             {
                 GameObject go = new GameObject(Id);
                 go.transform.parent = Tileset.Behaviour.transform;
+                //go.transform.localPosition =
+                //    new Vector3(computedTransform.m03, computedTransform.m13, computedTransform.m23);
+                //go.transform.localRotation = computedTransform.rotation;
+
+                // Perspectives : convert Cesium 3D tiles CRS to Unity CRS 
+                // Unity CRS is left handed Y Up
+                // Cesium 3D tiles CRS is right handed Z Up (https://github.com/CesiumGS/3d-tiles/tree/main/specification#coordinate-reference-system-crs)
+
+                // x = -x / y = z / z = y
                 go.transform.localPosition =
-                    new Vector3(computedTransform.m03, computedTransform.m13, computedTransform.m23);
-                go.transform.localRotation = computedTransform.rotation;
+                    new Vector3(-computedTransform.m03, computedTransform.m23, computedTransform.m13);
+                // 180 degrees rotation on Y axis
+                go.transform.localRotation = computedTransform.rotation * Quaternion.AngleAxis(180, Vector3.up);
+
                 go.transform.localScale = computedTransform.lossyScale;
                 go.layer = Tileset.Behaviour.gameObject.layer;
                 go.SetActive(false);
@@ -385,10 +396,10 @@ namespace Unity3DTiles
             if (boundingVolume.Box.Count == 12)
             {
                 var box = boundingVolume.Box;
-                Vector3 center = new Vector3((float)box[0], (float)box[1], (float)box[2]);
-                Vector3 halfAxesX = new Vector3((float)box[3], (float)box[4], (float)box[5]);
-                Vector3 halfAxesY = new Vector3((float)box[6], (float)box[7], (float)box[8]);
-                Vector3 halfAxesZ = new Vector3((float)box[9], (float)box[10], (float)box[11]);
+                Vector3 center = new Vector3((float)box[0], (float)box[1], (float)box[2]) * 100f;
+                Vector3 halfAxesX = new Vector3((float)box[3], (float)box[4], (float)box[5]) * 100f;
+                Vector3 halfAxesY = new Vector3((float)box[6], (float)box[7], (float)box[8]) * 100f;
+                Vector3 halfAxesZ = new Vector3((float)box[9], (float)box[10], (float)box[11]) * 100f;
 
                 // TODO: Review this coordinate frame change
                 // This does not take into account the coodinate frame of the glTF files and gltfUpAxis

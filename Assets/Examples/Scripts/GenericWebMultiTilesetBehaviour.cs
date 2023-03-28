@@ -135,7 +135,7 @@ public class GenericWebMultiTilesetBehaviour : MultiTilesetBehaviour
 #else
             yield return uwr.Send();
 #endif
-            if (uwr.isNetworkError || uwr.isHttpError)
+            if (uwr.result==UnityWebRequest.Result.ConnectionError || uwr.result==UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogError("error downloading " + url + ": " + uwr.error);
             }

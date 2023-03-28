@@ -33,6 +33,9 @@ namespace Unity3DTiles
         public bool AddColliders = false;
         public bool DownloadOnStart = true;
 
+        // Perspectives : Store B3DM data
+        public B3DMData B3DMData;
+
         public void Start()
         {
             if (DownloadOnStart)
@@ -62,7 +65,18 @@ namespace Unity3DTiles
 
             loadComplete = loadComplete ?? new Promise<bool>();
             yield return sceneImporter.LoadScene(-1, Multithreaded,
-                                                 sceneObject => loadComplete.Resolve(sceneObject != null));
+                                                 sceneObject =>
+                                                 {
+                                                     // Perspectives : Read extra data if B3DM format
+                                                     if (loader is B3DMLoader)
+                                                     {
+                                                         B3DMLoader b3dmload = loader as B3DMLoader;
+                                                         B3DMData = new B3DMData();
+                                                         B3DMData.BatchTable = b3dmload.BatchTable;
+                                                     }
+                                                     loadComplete.Resolve(sceneObject != null);
+                                                 });
+
         }
     }
 }

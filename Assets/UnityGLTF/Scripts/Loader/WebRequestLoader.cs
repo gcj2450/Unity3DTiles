@@ -50,11 +50,11 @@ namespace UnityGLTF.Loader
                 {
                     error = www.error;
                 }
-                else if (www.isNetworkError)
+                else if (www.result==UnityWebRequest.Result.ConnectionError)
                 {
                     error = "network error";
                 }
-                else if (www.isHttpError)
+                else if (www.result ==UnityWebRequest.Result.ProtocolError)
                 {
                     error = "HTTP error";
                 }
