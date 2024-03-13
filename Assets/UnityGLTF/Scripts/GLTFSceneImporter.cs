@@ -587,6 +587,9 @@ namespace UnityGLTF
                 Dictionary<string, AttributeAccessor> attributeAccessors = new Dictionary<string, AttributeAccessor>(primitive.Attributes.Count + 1);
                 foreach (var attributePair in primitive.Attributes)
                 {
+                    Debug.Log($"attributePair.Value : {attributePair.Value.Value.BufferView == null}");
+                    if (attributePair.Value.Value.BufferView == null)
+                        continue;
                     BufferId bufferIdPair = attributePair.Value.Value.BufferView.Value.Buffer;
                     GLTF.Schema.Buffer buffer = bufferIdPair.Value;
                     int bufferId = bufferIdPair.Id;
@@ -609,15 +612,18 @@ namespace UnityGLTF
 
                 if (primitive.Indices != null)
                 {
-                    int bufferId = primitive.Indices.Value.BufferView.Value.Buffer.Id;
-                    AttributeAccessor indexBuilder = new AttributeAccessor()
+                    if (primitive.Indices.Value.BufferView != null)
                     {
-                        AccessorId = primitive.Indices,
-                        Stream = _assetCache.BufferCache[bufferId].Stream,
-                        Offset = _assetCache.BufferCache[bufferId].ChunkOffset
-                    };
+                        int bufferId = primitive.Indices.Value.BufferView.Value.Buffer.Id;
+                        AttributeAccessor indexBuilder = new AttributeAccessor()
+                        {
+                            AccessorId = primitive.Indices,
+                            Stream = _assetCache.BufferCache[bufferId].Stream,
+                            Offset = _assetCache.BufferCache[bufferId].ChunkOffset
+                        };
 
-                    attributeAccessors[SemanticProperties.INDICES] = indexBuilder;
+                        attributeAccessors[SemanticProperties.INDICES] = indexBuilder;
+                    }
                 }
 
                 GLTFHelpers.BuildMeshAttributes(ref attributeAccessors);
@@ -1196,6 +1202,7 @@ namespace UnityGLTF
 
             MeshPrimitive primitive = meshConstructionData.Primitive;
             var meshAttributes = meshConstructionData.MeshAttributes;
+            Debug.Log($"meshAttributes:{meshAttributes==null}");
             var vertexCount = primitive.Attributes[SemanticProperties.POSITION].Value.Count;
 
 			// todo optimize: There are multiple copies being performed to turn the buffer data into mesh data. Look into reducing them
